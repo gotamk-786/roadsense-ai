@@ -1,0 +1,10 @@
+ultralytics
+opencv-python
+numpy
+pandas
+matplotlib
+fastapi
+uvicorn[standard]
+python-multipart
+pillow
+requests

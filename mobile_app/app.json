@@ -1,0 +1,27 @@
+﻿{
+  "expo": {
+    "name": "RoadSense AI",
+    "slug": "roadsense-ai",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "RoadSense AI uses the camera to detect road hazards in real time.",
+        "NSLocationWhenInUseUsageDescription": "RoadSense AI saves hazard locations for history and map alerts."
+      }
+    },
+    "android": {
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "VIBRATE"
+      ]
+    }
+  }
+}

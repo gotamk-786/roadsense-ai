@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.npm-cache/
+
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# AI model local artifacts
+ai_model/.appdata/
+ai_model/.cache/
+ai_model/.hf-cache/
+ai_model/.localappdata/
+ai_model/.matplotlib/
+ai_model/.pip-cache/
+ai_model/.pycache/
+ai_model/.tmp/
+ai_model/.torch-cache/
+ai_model/.ultralytics/
+ai_model/.venv/
+ai_model/datasets/
+ai_model/runs/
+ai_model/yolov8n.pt
+ai_model/*.pt
+ai_model/exports/*.pt
+
+# Logs
+*.log
+
+# Expo / React Native
+mobile_app/.expo/
+mobile_app/dist/
+
+# Backend builds
+backend/dist/
+
+# Environment files
+.env
+.env.*
+!.env.example

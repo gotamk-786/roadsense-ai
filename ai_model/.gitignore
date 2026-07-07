@@ -1,0 +1,14 @@
+﻿.venv/
+.pip-cache/
+.tmp/
+.torch-cache/
+.ultralytics/
+.matplotlib/
+.pycache/
+.cache/
+.hf-cache/
+runs/
+exports/*.pt
+exports/*.onnx
+exports/*.tflite
+datasets/roadsense/

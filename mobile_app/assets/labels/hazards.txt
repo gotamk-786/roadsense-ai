@@ -1,0 +1,8 @@
+﻿pothole
+speed_breaker
+animal
+pedestrian
+vehicle
+broken_road
+barrier
+water
