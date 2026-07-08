@@ -1,6 +1,6 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
-import { createHazard, listNearbyHazards, updateHazardStatus } from '../services/hazardStore.js';
+import { createHazard, getHazardStats, listNearbyHazards, updateHazardStatus } from '../services/hazardStore.js';
 
 export const hazardsRouter = Router();
 
@@ -10,6 +10,10 @@ const createHazardSchema = z.object({
   longitude: z.number(),
   confidence: z.number().min(0).max(1),
   image_url: z.string().url().optional()
+});
+
+const updateHazardSchema = z.object({
+  status: z.enum(['active', 'fixed', 'false_positive', 'archived'])
 });
 
 hazardsRouter.post('/', (req, res) => {
@@ -35,14 +39,18 @@ hazardsRouter.get('/nearby', (req, res) => {
   return res.json(listNearbyHazards(lat, lng, radius));
 });
 
-hazardsRouter.patch('/:id', (req, res) => {
-  const status = typeof req.body.status === 'string' ? req.body.status : null;
+hazardsRouter.get('/stats', (_req, res) => {
+  return res.json(getHazardStats());
+});
 
-  if (!status) {
-    return res.status(400).json({ error: 'status is required' });
+hazardsRouter.patch('/:id', (req, res) => {
+  const parsed = updateHazardSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
   }
 
-  const updated = updateHazardStatus(req.params.id, status);
+  const updated = updateHazardStatus(req.params.id, parsed.data.status);
 
   if (!updated) {
     return res.status(404).json({ error: 'hazard not found' });

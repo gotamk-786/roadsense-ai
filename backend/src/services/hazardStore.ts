@@ -1,4 +1,6 @@
-﻿import { randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 
 type HazardInput = {
   hazard_type: string;
@@ -16,7 +18,8 @@ type Hazard = HazardInput & {
   last_seen_at: string;
 };
 
-const hazards: Hazard[] = [];
+const dataFile = resolve(process.cwd(), 'data', 'hazards.json');
+const hazards: Hazard[] = loadHazards();
 
 export function createHazard(input: HazardInput): Hazard {
   const now = new Date().toISOString();
@@ -33,6 +36,7 @@ export function createHazard(input: HazardInput): Hazard {
     existing.report_count += 1;
     existing.last_seen_at = now;
     existing.confidence = Math.max(existing.confidence, input.confidence);
+    persistHazards();
     return existing;
   }
 
@@ -46,6 +50,7 @@ export function createHazard(input: HazardInput): Hazard {
   };
 
   hazards.unshift(hazard);
+  persistHazards();
   return hazard;
 }
 
@@ -63,7 +68,45 @@ export function updateHazardStatus(id: string, status: string): Hazard | null {
   }
 
   hazard.status = status;
+  persistHazards();
   return hazard;
+}
+
+export function getHazardStats() {
+  const byType = hazards.reduce<Record<string, number>>((acc, hazard) => {
+    acc[hazard.hazard_type] = (acc[hazard.hazard_type] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  const byStatus = hazards.reduce<Record<string, number>>((acc, hazard) => {
+    acc[hazard.status] = (acc[hazard.status] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    total: hazards.length,
+    active: hazards.filter((hazard) => hazard.status === 'active').length,
+    by_type: byType,
+    by_status: byStatus
+  };
+}
+
+function loadHazards(): Hazard[] {
+  if (!existsSync(dataFile)) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(readFileSync(dataFile, 'utf8')) as Hazard[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistHazards(): void {
+  mkdirSync(dirname(dataFile), { recursive: true });
+  writeFileSync(dataFile, JSON.stringify(hazards, null, 2));
 }
 
 function distanceMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -78,4 +121,3 @@ function distanceMeters(lat1: number, lon1: number, lat2: number, lon2: number):
 function toRad(value: number): number {
   return value * Math.PI / 180;
 }
-

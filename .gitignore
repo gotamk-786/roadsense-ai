@@ -35,6 +35,7 @@ mobile_app/dist/
 
 # Backend builds
 backend/dist/
+backend/data/
 
 # Environment files
 .env

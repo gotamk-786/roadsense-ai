@@ -1015,3 +1015,33 @@ Next industry-level step:
 - Train longer on GPU/Colab for stronger mAP.
 - Add database persistence for hazard reports.
 - Later export model to ONNX/TFLite for on-device mobile inference.
+
+## 29. Backend Persistence Improvement
+
+Backend hazard reports now persist locally instead of living only in memory.
+
+Changed files:
+
+```txt
+backend/src/services/hazardStore.ts
+backend/src/routes/hazards.ts
+docs/07-backend-api-guide.md
+```
+
+Runtime data file:
+
+```txt
+backend/data/hazards.json
+```
+
+Notes:
+
+- `backend/data/` is ignored by Git because it is runtime/local data.
+- Duplicate hazard reports within 25 meters still merge into one report and increase `report_count`.
+- Status updates are validated with allowed values: `active`, `fixed`, `false_positive`, `archived`.
+- New endpoint added: `GET /api/hazards/stats`.
+
+Future production upgrade:
+
+- Replace JSON file persistence with SQLite/PostgreSQL.
+- Use PostGIS or a geospatial index for large-scale nearby search.
