@@ -1167,13 +1167,25 @@ npm.cmd run typecheck -> pass
 
 Build blocker:
 
-- `adb` is not installed/on PATH.
-- Android SDK env vars are not configured.
-- `gradlew assembleDebug` started but failed/was stopped because the machine ran out of disk/pagefile resources while Gradle was building/downloading.
-- Gradle cache must stay on D drive using `GRADLE_USER_HOME`.
+- Android SDK was moved from C drive to `D:\Android\Sdk`.
+- `adb` is available inside `D:\Android\Sdk\platform-tools` but is not on PATH.
+- C drive space improved after moving SDK to D.
+- `gradlew assembleDebug` reaches native Gradle compile but did not finish on this laptop within practical time.
+- Gradle cache is configured to `D:\gradle_roadsense`.
+- Temp build folder is configured to `D:\roadsense_tmp`.
+- Android build is arm64-only for faster phone APK builds: `reactNativeArchitectures=arm64-v8a`.
+
+Efficiency changes:
+
+- On-device inference loop now prevents overlapping model runs.
+- On-device cadence is slower than mock/API mode.
+- Image compression reduced before tensor conversion.
+- NMS only runs on strongest candidates.
+- Voice/vibration alerts have cooldown.
+- GPS lookups are throttled.
 
 Next required machine setup:
 
-- Install Android Studio + SDK + Platform Tools.
-- Increase available C drive/pagefile or keep all Gradle/Android caches on D.
-- Build `mobile_app/android/app/build/outputs/apk/debug/app-debug.apk`.
+- Add `D:\Android\Sdk\platform-tools` to PATH for `adb`.
+- Continue APK build with `npm.cmd run build:android:debug`.
+- If build still stalls, use a stronger machine/Android Studio build or EAS Build.

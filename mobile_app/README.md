@@ -50,3 +50,16 @@ Run on connected Android device after Android Studio/platform-tools setup:
 ```bash
 npm run dev:android
 ```
+
+Build debug APK with D-drive Gradle cache:
+
+```bash
+npm run build:android:debug
+```
+
+For real road mode, copy `.env.real-road.example` values into `.env.local` before building:
+
+```txt
+EXPO_PUBLIC_USE_REAL_INFERENCE=false
+EXPO_PUBLIC_USE_ON_DEVICE_INFERENCE=true
+```

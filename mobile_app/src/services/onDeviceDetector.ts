@@ -6,6 +6,7 @@ import { InferenceSession, Tensor } from 'onnxruntime-react-native';
 import { Detection } from '../types/detection';
 
 const inputSize = 416;
+const maxCandidatesBeforeNms = 120;
 const labels = ['longitudinal_crack', 'transverse_crack', 'alligator_crack', 'pothole'];
 const modelAsset = require('../../assets/models/roadsense-rdd2022-yolov8n-best.onnx');
 
@@ -42,11 +43,15 @@ export async function runOnDeviceDetection(imageUri: string): Promise<Detection[
   return parseYoloOutput(result.data as Float32Array);
 }
 
+export async function warmOnDeviceDetector(): Promise<void> {
+  await getSession();
+}
+
 async function imageToTensor(imageUri: string): Promise<Tensor> {
   const resized = await ImageManipulator.manipulateAsync(
     imageUri,
     [{ resize: { width: inputSize, height: inputSize } }],
-    { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG, base64: true },
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true },
   );
 
   if (!resized.base64) {
@@ -94,7 +99,11 @@ function parseYoloOutput(data: Float32Array): Detection[] {
     });
   }
 
-  return nonMaxSuppression(candidates)
+  const strongestCandidates = candidates
+    .sort((a, b) => b.confidence - a.confidence)
+    .slice(0, maxCandidatesBeforeNms);
+
+  return nonMaxSuppression(strongestCandidates)
     .slice(0, 8)
     .map((candidate, index) => {
       const x = clamp01((candidate.cx - candidate.width / 2) / inputSize);

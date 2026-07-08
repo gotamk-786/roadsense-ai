@@ -35,6 +35,7 @@ ai_model/exports/mobile/
 mobile_app/.expo/
 mobile_app/dist/
 mobile_app/.gradle-home/
+mobile_app/.tmp/
 mobile_app/android/.gradle/
 mobile_app/android/app/build/
 mobile_app/android/build/
@@ -47,3 +48,4 @@ backend/data/
 .env
 .env.*
 !.env.example
+!mobile_app/.env.real-road.example

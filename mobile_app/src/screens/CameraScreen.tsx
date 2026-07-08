@@ -8,7 +8,7 @@ import { StatusPill } from '../components/StatusPill';
 import { alertForDetection } from '../services/alertEngine';
 import { runMockDetection } from '../services/mockDetector';
 import { runApiDetection } from '../services/inferenceClient';
-import { runOnDeviceDetection } from '../services/onDeviceDetector';
+import { runOnDeviceDetection, warmOnDeviceDetector } from '../services/onDeviceDetector';
 import { saveHazardReport } from '../storage/hazardHistory';
 import { INFERENCE_API_URL, USE_ON_DEVICE_INFERENCE, USE_REAL_INFERENCE } from '../config/inference';
 
@@ -20,6 +20,11 @@ export function CameraScreen() {
   const [lastAlert, setLastAlert] = useState('No hazard detected');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cameraRef = useRef<CameraView | null>(null);
+  const isProcessingRef = useRef(false);
+  const lastAlertAtRef = useRef(0);
+  const lastLocationRef = useRef<Location.LocationObject | null>(null);
+
+  const detectionIntervalMs = USE_ON_DEVICE_INFERENCE ? 2600 : 1400;
 
   useEffect(() => {
     requestCameraPermission();
@@ -27,6 +32,15 @@ export function CameraScreen() {
       setLocationGranted(result.status === 'granted');
     });
   }, [requestCameraPermission]);
+
+  useEffect(() => {
+    if (USE_ON_DEVICE_INFERENCE) {
+      setLastAlert('Loading on-device model');
+      warmOnDeviceDetector()
+        .then(() => setLastAlert('On-device AI ready'))
+        .catch(() => setLastAlert('On-device AI unavailable'));
+    }
+  }, []);
 
   useEffect(() => {
     if (!isDetecting || !cameraPermission?.granted) {
@@ -37,11 +51,16 @@ export function CameraScreen() {
     }
 
     intervalRef.current = setInterval(async () => {
+      if (isProcessingRef.current) {
+        return;
+      }
+
+      isProcessingRef.current = true;
       let result: Detection[] = [];
       try {
         if (USE_ON_DEVICE_INFERENCE && cameraRef.current) {
           const photo = await cameraRef.current.takePictureAsync({
-            quality: 0.65,
+            quality: 0.45,
             skipProcessing: true
           });
           result = photo?.uri ? await runOnDeviceDetection(photo.uri) : [];
@@ -55,8 +74,10 @@ export function CameraScreen() {
           result = await runMockDetection();
         }
       } catch (error) {
-        setLastAlert('Inference API unavailable');
+        setLastAlert(USE_ON_DEVICE_INFERENCE ? 'On-device AI unavailable' : 'Inference API unavailable');
         result = [];
+      } finally {
+        isProcessingRef.current = false;
       }
 
       setDetections(result);
@@ -67,9 +88,19 @@ export function CameraScreen() {
       }
 
       setLastAlert(`${strongest.type.replace('_', ' ')} detected`);
-      await alertForDetection(strongest);
+      const now = Date.now();
+      if (now - lastAlertAtRef.current > 3500) {
+        lastAlertAtRef.current = now;
+        await alertForDetection(strongest);
+      }
 
-      const location = locationGranted ? await Location.getCurrentPositionAsync({}) : null;
+      if (locationGranted && now - (lastLocationRef.current?.timestamp ?? 0) > 5000) {
+        lastLocationRef.current = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced
+        });
+      }
+
+      const location = lastLocationRef.current;
       await saveHazardReport({
         id: strongest.id,
         type: strongest.type,
@@ -78,14 +109,14 @@ export function CameraScreen() {
         longitude: location?.coords.longitude ?? null,
         createdAt: strongest.createdAt
       });
-    }, 1400);
+    }, detectionIntervalMs);
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [cameraPermission?.granted, isDetecting, locationGranted]);
+  }, [cameraPermission?.granted, detectionIntervalMs, isDetecting, locationGranted]);
 
   if (!cameraPermission?.granted) {
     return (

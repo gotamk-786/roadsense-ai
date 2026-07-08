@@ -99,32 +99,33 @@ Completed:
 - ONNX model copied into mobile assets
 - Android native project generated with `npm run prebuild:android`
 - TypeScript compile passes
+- On-device loop optimized to avoid overlapping inference calls
+- Alert cooldown added to reduce repeated speech/vibration
+- Location lookup throttled to reduce GPS overhead
+- Android SDK moved to `D:\Android\Sdk` to reduce C-drive pressure
 
 Blocked on this machine:
 
-- `gradlew assembleDebug` did not finish because Gradle/Android build exhausted available disk/pagefile resources.
-- `adb` is not installed or not on PATH.
-- Android SDK environment variables are not configured.
+- `gradlew assembleDebug` reaches native Gradle compile but is too slow/stalls on this laptop.
+- `adb` is not on PATH, although Android platform tools exist under `D:\Android\Sdk`.
+- Debug APK has not been produced yet.
 
 To finish APK build:
 
-1. Install Android Studio.
-2. Install Android SDK Platform 35 or latest Expo SDK 54 compatible platform.
-3. Install Android SDK Build Tools and Platform Tools.
-4. Add `adb` to PATH.
-5. Keep Gradle cache on D drive:
+1. Add `D:\Android\Sdk\platform-tools` to PATH for `adb`.
+2. Keep Gradle cache and temp folders on D drive:
 
 ```bat
-set GRADLE_USER_HOME=D:\6th semester\computer vision\mobile_app\.gradle-home
+set GRADLE_USER_HOME=D:\gradle_roadsense
+set TEMP=D:\roadsense_tmp
+set TMP=D:\roadsense_tmp
 ```
 
-6. Build:
+3. Build:
 
 ```bat
-cd "D:\6th semester\computer vision\mobile_app\android"
-set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot
-set GRADLE_USER_HOME=D:\6th semester\computer vision\mobile_app\.gradle-home
-gradlew.bat assembleDebug
+cd "D:\6th semester\computer vision\mobile_app"
+npm.cmd run build:android:debug
 ```
 
 Expected APK:
