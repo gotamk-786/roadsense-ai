@@ -28,8 +28,25 @@ Then open with Expo Go or Android emulator.
 
 Replace `src/services/mockDetector.ts` with a real model runner:
 
-- Option A: `react-native-fast-tflite` for TFLite in a bare React Native app
-- Option B: `@tensorflow/tfjs-react-native` for TensorFlow.js models
-- Option C: native Android/Kotlin model bridge for maximum performance
+Current real-road direction:
 
-Recommended production path: train YOLOv8n, export to TFLite, then run with `react-native-fast-tflite` after ejecting/prebuilding from Expo.
+- ONNX model stored in `assets/models/roadsense-rdd2022-yolov8n-best.onnx`
+- On-device runner scaffolded in `src/services/onDeviceDetector.ts`
+- Enable with `EXPO_PUBLIC_USE_ON_DEVICE_INFERENCE=true`
+- Requires Expo development build or Android APK, not Expo Go
+
+## Real Road Android Build
+
+Expo Go cannot load `onnxruntime-react-native`.
+
+Generate native Android project:
+
+```bash
+npm run prebuild:android
+```
+
+Run on connected Android device after Android Studio/platform-tools setup:
+
+```bash
+npm run dev:android
+```

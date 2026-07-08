@@ -8,8 +8,9 @@ import { StatusPill } from '../components/StatusPill';
 import { alertForDetection } from '../services/alertEngine';
 import { runMockDetection } from '../services/mockDetector';
 import { runApiDetection } from '../services/inferenceClient';
+import { runOnDeviceDetection } from '../services/onDeviceDetector';
 import { saveHazardReport } from '../storage/hazardHistory';
-import { INFERENCE_API_URL, USE_REAL_INFERENCE } from '../config/inference';
+import { INFERENCE_API_URL, USE_ON_DEVICE_INFERENCE, USE_REAL_INFERENCE } from '../config/inference';
 
 export function CameraScreen() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -38,7 +39,13 @@ export function CameraScreen() {
     intervalRef.current = setInterval(async () => {
       let result: Detection[] = [];
       try {
-        if (USE_REAL_INFERENCE && cameraRef.current) {
+        if (USE_ON_DEVICE_INFERENCE && cameraRef.current) {
+          const photo = await cameraRef.current.takePictureAsync({
+            quality: 0.65,
+            skipProcessing: true
+          });
+          result = photo?.uri ? await runOnDeviceDetection(photo.uri) : [];
+        } else if (USE_REAL_INFERENCE && cameraRef.current) {
           const photo = await cameraRef.current.takePictureAsync({
             quality: 0.45,
             skipProcessing: true

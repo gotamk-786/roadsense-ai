@@ -1118,6 +1118,62 @@ Inference time on laptop: about 89 ms
 
 Important:
 
-- ONNX file is a generated model artifact and is not committed to Git.
+- AI workspace ONNX exports are generated artifacts and are ignored by Git.
+- The mobile app copy at `mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx` is committed because the real-road Android build needs the model bundled in the app.
 - For real road phone use, next implementation needs an Expo development build or native Android app with `onnxruntime-react-native`.
 - Expo Go cannot load native ONNX/TFLite runtime modules.
+
+## 32. Real Road Android App Work
+
+Implemented on-device inference scaffold in the mobile app.
+
+Added:
+
+```txt
+mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx
+mobile_app/src/services/onDeviceDetector.ts
+```
+
+Installed mobile native dependencies:
+
+```txt
+onnxruntime-react-native
+expo-dev-client
+expo-asset
+expo-file-system
+expo-image-manipulator
+jpeg-js
+buffer
+```
+
+Config:
+
+```txt
+EXPO_PUBLIC_USE_ON_DEVICE_INFERENCE=true
+EXPO_PUBLIC_USE_REAL_INFERENCE=false
+```
+
+Generated native Android project:
+
+```txt
+mobile_app/android/
+```
+
+Verification completed:
+
+```txt
+npm.cmd run typecheck -> pass
+```
+
+Build blocker:
+
+- `adb` is not installed/on PATH.
+- Android SDK env vars are not configured.
+- `gradlew assembleDebug` started but failed/was stopped because the machine ran out of disk/pagefile resources while Gradle was building/downloading.
+- Gradle cache must stay on D drive using `GRADLE_USER_HOME`.
+
+Next required machine setup:
+
+- Install Android Studio + SDK + Platform Tools.
+- Increase available C drive/pagefile or keep all Gradle/Android caches on D.
+- Build `mobile_app/android/app/build/outputs/apk/debug/app-debug.apk`.

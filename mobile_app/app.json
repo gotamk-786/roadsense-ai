@@ -1,4 +1,4 @@
-﻿{
+{
   "expo": {
     "name": "RoadSense AI",
     "slug": "roadsense-ai",
@@ -16,12 +16,16 @@
       }
     },
     "android": {
+      "package": "com.roadsenseai.mobile",
       "permissions": [
         "CAMERA",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "VIBRATE"
       ]
-    }
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }

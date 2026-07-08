@@ -34,6 +34,10 @@ ai_model/exports/mobile/
 # Expo / React Native
 mobile_app/.expo/
 mobile_app/dist/
+mobile_app/.gradle-home/
+mobile_app/android/.gradle/
+mobile_app/android/app/build/
+mobile_app/android/build/
 
 # Backend builds
 backend/dist/
