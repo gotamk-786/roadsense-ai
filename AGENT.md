@@ -1045,3 +1045,40 @@ Future production upgrade:
 
 - Replace JSON file persistence with SQLite/PostgreSQL.
 - Use PostGIS or a geospatial index for large-scale nearby search.
+
+## 30. Mobile Real Inference Setup
+
+Mobile app now reads inference settings from Expo public environment variables.
+
+Committed example:
+
+```txt
+mobile_app/.env.example
+```
+
+Local machine config:
+
+```txt
+mobile_app/.env.local
+```
+
+Current local values:
+
+```txt
+EXPO_PUBLIC_USE_REAL_INFERENCE=true
+EXPO_PUBLIC_INFERENCE_API_URL=http://192.168.100.9:8000/predict
+```
+
+Verified on laptop:
+
+```txt
+GET http://192.168.100.9:8000/health -> status ok
+POST http://192.168.100.9:8000/predict -> pothole detections returned
+```
+
+Phone test requirement:
+
+- Start inference API with `--host 0.0.0.0`.
+- Start Expo app.
+- Phone and laptop must be on the same Wi-Fi.
+- If laptop IP changes, update `mobile_app/.env.local`.

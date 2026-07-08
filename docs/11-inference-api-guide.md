@@ -67,27 +67,26 @@ pothole 0.9035
 
 ## Mobile App Switch
 
-File:
+Runtime config file:
 
 ```txt
-mobile_app/src/config/inference.ts
+mobile_app/.env.local
 ```
 
-Default:
+Example:
 
-```ts
-export const USE_REAL_INFERENCE = false;
-export const INFERENCE_API_URL = 'http://127.0.0.1:8000/predict';
+```txt
+EXPO_PUBLIC_USE_REAL_INFERENCE=true
+EXPO_PUBLIC_INFERENCE_API_URL=http://192.168.100.9:8000/predict
 ```
 
-For a real Android phone using Expo Go, replace `127.0.0.1` with the PC LAN IP:
+Committed example file:
 
-```ts
-export const USE_REAL_INFERENCE = true;
-export const INFERENCE_API_URL = 'http://192.168.1.20:8000/predict';
+```txt
+mobile_app/.env.example
 ```
 
-Both phone and laptop must be on the same Wi-Fi network.
+Both phone and laptop must be on the same Wi-Fi network. If the PC IP changes, update `EXPO_PUBLIC_INFERENCE_API_URL`.
 
 ## Industry Notes
 
