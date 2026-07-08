@@ -98,3 +98,34 @@ Run demo with trained model:
 ```bat
 python training_scripts\run_video_demo.py --model exports\roadsense-rdd2022-yolov8n-best.pt --source datasets\roadsense\images\test\China_Drone_000237.jpg
 ```
+
+## Export For Real Road Mobile Use
+
+The `.pt` model is for Python. For road use without laptop/Wi-Fi, export a mobile-friendly model:
+
+```bat
+python training_scripts\export_mobile_model.py --format onnx --imgsz 416
+```
+
+Output folder:
+
+```txt
+exports/mobile/
+```
+
+Current verified export:
+
+```txt
+exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
+```
+
+Quick ONNX test:
+
+```bat
+python training_scripts\run_video_demo.py --model exports\mobile\roadsense-rdd2022-yolov8n-best.onnx --source datasets\roadsense\images\test\China_Drone_000237.jpg --save --name roadsense-onnx-test
+```
+
+Recommended next mobile runtime:
+
+- ONNX: `onnxruntime-react-native` with Expo development build
+- TFLite: `react-native-fast-tflite` with Expo development build or bare React Native

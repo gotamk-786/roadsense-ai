@@ -42,6 +42,7 @@ Read docs in this order:
 10. `docs/10-quality-checklist.md`
 11. `docs/11-inference-api-guide.md`
 12. `docs/12-demo-checklist.md`
+13. `docs/13-real-road-mobile-plan.md`
 
 ## Run Mobile App
 

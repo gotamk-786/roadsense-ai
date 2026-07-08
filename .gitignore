@@ -25,6 +25,8 @@ ai_model/runs/
 ai_model/yolov8n.pt
 ai_model/*.pt
 ai_model/exports/*.pt
+ai_model/exports/*.onnx
+ai_model/exports/mobile/
 
 # Logs
 *.log

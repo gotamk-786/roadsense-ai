@@ -1082,3 +1082,42 @@ Phone test requirement:
 - Start Expo app.
 - Phone and laptop must be on the same Wi-Fi.
 - If laptop IP changes, update `mobile_app/.env.local`.
+
+## 31. Real Road On-Device Model Export
+
+Road use cannot depend on the laptop FastAPI server because phone and laptop will not always share Wi-Fi.
+
+Added mobile export script:
+
+```txt
+ai_model/training_scripts/export_mobile_model.py
+```
+
+Export command:
+
+```bat
+cd "D:\6th semester\computer vision\ai_model"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
+python training_scripts\export_mobile_model.py --format onnx --imgsz 416
+```
+
+Verified export:
+
+```txt
+ai_model/exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
+```
+
+ONNX test result:
+
+```txt
+Source image: datasets/roadsense/images/test/China_Drone_000237.jpg
+Result: 2 potholes detected
+Runtime: ONNX Runtime CPU
+Inference time on laptop: about 89 ms
+```
+
+Important:
+
+- ONNX file is a generated model artifact and is not committed to Git.
+- For real road phone use, next implementation needs an Expo development build or native Android app with `onnxruntime-react-native`.
+- Expo Go cannot load native ONNX/TFLite runtime modules.
