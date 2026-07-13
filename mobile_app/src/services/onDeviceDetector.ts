@@ -85,7 +85,7 @@ function parseYoloOutput(data: Float32Array): Detection[] {
     const confidence = Math.max(...classScores);
     const labelIndex = classScores.indexOf(confidence);
 
-    if (confidence < 0.4) {
+    if (confidence < 0.5) {
       continue;
     }
 
