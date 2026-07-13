@@ -14,16 +14,16 @@ type ApiPredictionResponse = {
   detections: ApiDetection[];
 };
 
+const knownHazardTypes: HazardType[] = [
+  'longitudinal_crack',
+  'transverse_crack',
+  'alligator_crack',
+  'pothole'
+];
+
 function toHazardType(label: string): HazardType {
-  if (label === 'pothole') {
-    return 'pothole';
-  }
-
-  if (label.includes('crack')) {
-    return 'broken_road';
-  }
-
-  return 'broken_road';
+  const match = knownHazardTypes.find((type) => type === label);
+  return match ?? 'pothole';
 }
 
 export async function runApiDetection(imageUri: string, endpoint: string): Promise<Detection[]> {

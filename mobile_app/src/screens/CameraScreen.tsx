@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import { Detection } from '../types/detection';
@@ -84,6 +85,7 @@ export function CameraScreen() {
 
       const strongest = result[0];
       if (!strongest) {
+        setLastAlert('No hazard detected');
         return;
       }
 

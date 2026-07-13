@@ -49,3 +49,9 @@ backend/data/
 .env.*
 !.env.example
 !mobile_app/.env.real-road.example
+
+# Local dataset copies (too large for git; regenerate via training scripts)
+/roadsense/
+
+# Local test screenshots
+mobile_app/phone_screenshot*.png

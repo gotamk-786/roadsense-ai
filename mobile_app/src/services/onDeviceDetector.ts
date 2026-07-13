@@ -3,11 +3,11 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { Buffer } from 'buffer';
 import jpeg from 'jpeg-js';
 import { InferenceSession, Tensor } from 'onnxruntime-react-native';
-import { Detection } from '../types/detection';
+import { Detection, HazardType } from '../types/detection';
 
 const inputSize = 416;
 const maxCandidatesBeforeNms = 120;
-const labels = ['longitudinal_crack', 'transverse_crack', 'alligator_crack', 'pothole'];
+const labels: HazardType[] = ['longitudinal_crack', 'transverse_crack', 'alligator_crack', 'pothole'];
 const modelAsset = require('../../assets/models/roadsense-rdd2022-yolov8n-best.onnx');
 
 let sessionPromise: Promise<InferenceSession> | null = null;
@@ -85,7 +85,7 @@ function parseYoloOutput(data: Float32Array): Detection[] {
     const confidence = Math.max(...classScores);
     const labelIndex = classScores.indexOf(confidence);
 
-    if (confidence < 0.35) {
+    if (confidence < 0.6) {
       continue;
     }
 
@@ -114,7 +114,7 @@ function parseYoloOutput(data: Float32Array): Detection[] {
 
       return {
         id: `${Date.now()}-onnx-${index}`,
-        type: label === 'pothole' ? 'pothole' : 'broken_road',
+        type: label,
         confidence: Number(candidate.confidence.toFixed(4)),
         box: { x, y, width, height },
         createdAt: new Date().toISOString(),

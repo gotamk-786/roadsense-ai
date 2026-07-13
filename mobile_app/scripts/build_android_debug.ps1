@@ -29,5 +29,15 @@ $env:GRADLE_USER_HOME = $gradleHome
 $env:TEMP = $tmpDir
 $env:TMP = $tmpDir
 
+$staleBundleDirs = @(
+  (Join-Path $androidRoot "app\build\generated\assets\createBundleDebugJsAndAssets"),
+  (Join-Path $androidRoot "app\build\generated\res\createBundleDebugJsAndAssets")
+)
+foreach ($dir in $staleBundleDirs) {
+  if (Test-Path -LiteralPath $dir) {
+    Remove-Item -LiteralPath $dir -Recurse -Force
+  }
+}
+
 Set-Location -LiteralPath $androidRoot
 .\gradlew.bat assembleDebug --no-daemon --max-workers=1

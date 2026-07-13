@@ -2,15 +2,15 @@
 
 ## 1. Project Summary
 
-RoadSense AI aik computer vision based mobile/dashcam app hai jo road par chalti car, bike ya rickshaw ke camera se live video analyze karega aur driver ko dangerous road conditions ke bare mein warning dega.
+RoadSense AI is a computer vision based mobile/dashcam app that will analyze live video from the camera of a moving car, bike, or rickshaw on the road and warn the driver about dangerous road conditions.
 
-App ka main purpose driver safety improve karna hai. Ye road ke hazards detect karega jaise pothole, broken road, speed breaker, road jump, animal, pedestrian, vehicle, construction barrier, water, mud, accident object, ya road blockage.
+The app's main purpose is to improve driver safety. It will detect road hazards such as pothole, broken road, speed breaker, road jump, animal, pedestrian, vehicle, construction barrier, water, mud, accident object, or road blockage.
 
 ## 2. Problem Statement
 
-Pakistan aur similar countries mein roads par aksar potholes, broken patches, sudden speed breakers, animals, pedestrians, aur unexpected obstacles hotay hain. Driver ko in hazards ka late pata chalta hai, jis se accident, vehicle damage, ya sudden braking ka risk hota hai.
+In Pakistan and similar countries, roads often have potholes, broken patches, sudden speed breakers, animals, pedestrians, and unexpected obstacles. Drivers often notice these hazards too late, which creates a risk of accidents, vehicle damage, or sudden braking.
 
-Is project ka goal hai aik AI assistant banana jo road ko live scan kare aur driver ko time par alert de.
+This project's goal is to build an AI assistant that scans the road live and gives the driver a timely alert.
 
 ## 3. Target Users
 
@@ -27,7 +27,7 @@ Is project ka goal hai aik AI assistant banana jo road ko live scan kare aur dri
 
 ### 4.1 Live Camera Detection
 
-App phone camera ya dashcam se live video feed lega aur frame by frame detect karega:
+The app will take a live video feed from the phone camera or dashcam and detect frame by frame:
 
 - Pothole
 - Broken road
@@ -45,44 +45,44 @@ App phone camera ya dashcam se live video feed lega aur frame by frame detect ka
 
 ### 4.2 Real-Time Alerts
 
-Detection ke baad app driver ko warning dega:
+After detection, the app will warn the driver:
 
 - Voice alert: `Pothole ahead`
 - Beep alert
 - Vibration alert
-- Screen par red/yellow warning label
+- Red/yellow warning label on screen
 - Distance estimate: `Hazard approx 10 meters ahead`
 
 ### 4.3 GPS Location Logging
 
-Jab hazard detect ho:
+When a hazard is detected:
 
-- GPS latitude/longitude save ho
-- Hazard type save ho
-- Confidence score save ho
-- Date/time save ho
-- Optional image snapshot save ho
+- GPS latitude/longitude is saved
+- Hazard type is saved
+- Confidence score is saved
+- Date/time is saved
+- Optional image snapshot is saved
 
 ### 4.4 Community Hazard Map
 
-Aik user ka detected hazard doosre users ke liye useful banega.
+One user's detected hazard will become useful for other users.
 
 Example:
 
-- User A ne pothole detect kiya
-- Location backend par save hui
-- User B jab same road par aaye, app pehle se warning de: `Reported pothole ahead`
+- User A detected a pothole
+- The location was saved on the backend
+- When User B arrives on the same road, the app already gives a warning: `Reported pothole ahead`
 
 ### 4.5 Road Condition Score
 
-Road ko score diya ja sakta hai:
+The road can be given a score:
 
 - Good
 - Average
 - Risky
 - Dangerous
 
-Score based hoga:
+The score will be based on:
 
 - Number of potholes
 - Broken road detections
@@ -92,23 +92,23 @@ Score based hoga:
 
 ## 5. MVP Scope
 
-Pehla version simple aur practical hona chahiye.
+The first version should be simple and practical.
 
-MVP mein sirf ye cheezen hon:
+The MVP should include only these items:
 
-1. Mobile camera open ho
-2. Live video frames process hon
-3. Pothole, speed breaker, animal, pedestrian, vehicle detect hon
-4. Bounding box screen par show ho
-5. Voice/vibration alert aaye
-6. GPS location save ho
-7. Detection history list mein show ho
+1. Mobile camera opens
+2. Live video frames are processed
+3. Pothole, speed breaker, animal, pedestrian, vehicle are detected
+4. Bounding box is shown on screen
+5. Voice/vibration alert is given
+6. GPS location is saved
+7. Detection history is shown in a list
 
-MVP mein advanced map, admin dashboard, aur community reporting baad mein add karna better hai.
+It is better to add the advanced map, admin dashboard, and community reporting later in the MVP.
 
 ## 6. Advanced Features
 
-Future version mein add kar sakte hain:
+These can be added in a future version:
 
 - Offline AI model
 - Google Maps / Mapbox integration
@@ -134,8 +134,8 @@ Recommended: Flutter
 
 Reasons:
 
-- Android/iOS dono support
-- Camera integration strong
+- Supports both Android/iOS
+- Strong camera integration
 - TensorFlow Lite support available
 - GPS, vibration, TTS easily available
 - Fast UI development
@@ -354,12 +354,12 @@ Mobile Camera
 
 ### 11.1 Detection Filter
 
-Raw model output ko direct alert nahi karna chahiye. Filter lagana zaroori hai.
+Raw model output should not be alerted directly. Applying a filter is necessary.
 
 Rules:
 
 - Confidence threshold: 0.50 or above
-- Same hazard 3 frames tak detect ho phir alert
+- Alert only after the same hazard is detected for 3 frames
 - Duplicate alerts cooldown: 5-10 seconds
 - Ignore very small boxes unless nearby object suspected
 
@@ -487,35 +487,35 @@ Store:
 
 Important rules:
 
-- Driver ko app operate karne ki zaroorat na ho while driving
-- Alerts voice/vibration based hon
+- The driver should not need to operate the app while driving
+- Alerts should be voice/vibration based
 - App should not distract driver
-- Personal faces/license plates avoid ya blur hon
-- Location data user consent ke sath collect ho
+- Personal faces/license plates should be avoided or blurred
+- Location data should be collected with user consent
 - Clear permission screen: camera, GPS, microphone not needed unless recording audio
 
 ## 16. Development Roadmap
 
 ### Phase 1 - Research and Dataset
 
-- Final classes select karo
-- Existing datasets find karo
-- 500-1000 images collect karo
-- Roboflow/LabelImg se annotate karo
-- Baseline YOLO train karo
+- Select final classes
+- Find existing datasets
+- Collect 500-1000 images
+- Annotate using Roboflow/LabelImg
+- Train baseline YOLO
 
 ### Phase 2 - Model Training
 
-- YOLO nano model train karo
-- Validation metrics check karo
-- False positives improve karo
-- TFLite export test karo
+- Train YOLO nano model
+- Check validation metrics
+- Improve false positives
+- Test TFLite export
 
 ### Phase 3 - Flutter MVP
 
 - Camera preview screen
 - TFLite model integration
-- Bounding boxes draw karo
+- Draw bounding boxes
 - Voice/vibration alerts
 - GPS permission and location logging
 - Detection history
@@ -574,18 +574,18 @@ road-sense-ai/
 
 ## 18. Agent Instructions
 
-Agar koi AI coding agent is project par kaam kare, to ye rules follow kare:
+If an AI coding agent works on this project, it should follow these rules:
 
-1. Pehle MVP complete kare, advanced features baad mein.
-2. Detection classes initially limited rakhe.
-3. Real-time performance ko priority de.
-4. Mobile app driver distraction kam rakhe.
-5. AI model ko app ke andar offline chalane ki koshish kare.
-6. Sensitive data store karne se pehle privacy rules check kare.
-7. Backend sync optional rakhe so app offline bhi work kare.
-8. False positive alerts reduce karne ke liye multi-frame filtering use kare.
-9. Code modular ho: camera, detector, alert, location, storage separate modules mein.
-10. Har phase ke baad demo/video test zaroor kare.
+1. Complete the MVP first, advanced features later.
+2. Keep detection classes limited initially.
+3. Prioritize real-time performance.
+4. Keep mobile app driver distraction low.
+5. Try to run the AI model offline inside the app.
+6. Check privacy rules before storing sensitive data.
+7. Keep backend sync optional so the app also works offline.
+8. Use multi-frame filtering to reduce false positive alerts.
+9. Keep code modular: camera, detector, alert, location, storage in separate modules.
+10. Always run a demo/video test after each phase.
 
 ## 19. Suggested Project Names
 
@@ -601,7 +601,7 @@ Recommended final name: RoadSense AI
 
 ## 20. Presentation Outline
 
-University presentation ke liye slides:
+Slides for the university presentation:
 
 1. Title: RoadSense AI
 2. Problem statement
@@ -619,13 +619,13 @@ University presentation ke liye slides:
 
 ## 21. Limitations
 
-- Night detection difficult ho sakti hai
-- Rain/fog mein accuracy kam ho sakti hai
-- Pothole depth estimate hard hai
-- Phone camera angle se result change hoga
-- False positives possible hain
-- Real-time AI battery consume karega
-- Speed breaker aur road shadow confuse ho sakte hain
+- Night detection can be difficult
+- Accuracy can be lower in rain/fog
+- Pothole depth estimation is hard
+- Results will change based on phone camera angle
+- False positives are possible
+- Real-time AI will consume battery
+- Speed breakers and road shadows can be confused with each other
 
 ## 22. Future Improvements
 
@@ -640,36 +640,36 @@ University presentation ke liye slides:
 
 ## 23. Final MVP Definition
 
-Project tab MVP complete mana jayega jab:
+The project will be considered MVP complete when:
 
-- App camera se live road feed dikhaye
-- AI model at least 3 classes detect kare
-- Screen par bounding box aaye
-- Voice/vibration warning aaye
-- GPS ke sath detection save ho
-- Detection history screen par result show ho
-- Demo road video par app working show ho
+- The app shows a live road feed from the camera
+- The AI model detects at least 3 classes
+- A bounding box appears on screen
+- Voice/vibration warning is given
+- Detection is saved along with GPS
+- Detection history screen shows the results
+- The app shows working results on a demo road video
 
 ## 24. Recommended First Task List
 
-1. Project title final karo: RoadSense AI
-2. Classes final karo: pothole, speed_breaker, animal, pedestrian, vehicle
-3. Dataset collect karo
-4. 300-500 images annotate karo
-5. YOLOv8n train karo
-6. Test video par model run karo
-7. Flutter app create karo
-8. Camera screen banao
-9. TFLite model integrate karo
-10. Alert system add karo
-11. GPS logging add karo
-12. Final report and presentation banao
+1. Finalize project title: RoadSense AI
+2. Finalize classes: pothole, speed_breaker, animal, pedestrian, vehicle
+3. Collect dataset
+4. Annotate 300-500 images
+5. Train YOLOv8n
+6. Run the model on a test video
+7. Create Flutter app
+8. Build camera screen
+9. Integrate TFLite model
+10. Add alert system
+11. Add GPS logging
+12. Prepare final report and presentation
 
 ## 25. Free-First Resume Build Plan
 
-Project abhi resume, LinkedIn, GitHub portfolio, aur university demo ke liye ban raha hai. Is phase mein paid/commercial cheezon ko avoid karna hai. Goal aik real-world looking MVP banana hai jo free tools, public datasets, local backend, aur offline-first app flow par chale.
+The project is currently being built for a resume, LinkedIn, GitHub portfolio, and university demo. Paid/commercial items should be avoided during this phase. The goal is to build a real-world looking MVP that runs on free tools, public datasets, a local backend, and an offline-first app flow.
 
-### 25.1 Abhi Free Mein Kya Use Kar Rahe Hain
+### 25.1 What We Are Currently Using For Free
 
 - Mobile app: React Native + Expo
 - Camera/GPS/alerts: Expo Camera, Expo Location, Expo Speech, Expo Haptics
@@ -677,10 +677,10 @@ Project abhi resume, LinkedIn, GitHub portfolio, aur university demo ke liye ban
 - Backend: Local Node.js + Express API
 - Mobile storage: AsyncStorage
 - Dataset: public/free datasets plus self-collected local road videos/images
-- Map: abhi GPS/history only; OpenStreetMap option later
-- Hosting: abhi local only
+- Map: currently GPS/history only; OpenStreetMap option later
+- Hosting: currently local only
 
-### 25.2 Dataset Kahan Se Uthana Hai
+### 25.2 Where To Get The Dataset From
 
 Primary dataset:
 
@@ -731,7 +731,7 @@ Use pretrained YOLO/COCO classes for common objects:
 
 This keeps dataset work manageable and makes the MVP faster to finish.
 
-### 25.4 Abhi Kya Build Karna Hai
+### 25.4 What To Build Right Now
 
 1. Mobile camera screen
 2. Mock detection demo first
@@ -744,7 +744,7 @@ This keeps dataset work manageable and makes the MVP faster to finish.
 9. Video demo using `run_video_demo.py`
 10. Short demo recording for LinkedIn/GitHub
 
-### 25.5 Abhi Kya Nahi Karna
+### 25.5 What Not To Do Right Now
 
 Do not spend time now on:
 
@@ -759,7 +759,7 @@ Do not spend time now on:
 - Fleet dashboard
 - Production cloud deployment
 
-Ye sab future commercial phase mein jayega.
+All of this will go into a future commercial phase.
 
 ### 25.6 Free Backend Plan
 
@@ -843,7 +843,7 @@ Future contributors/agents must update the matching doc whenever they change set
 
 ## 27. Actual Dataset And Training Status
 
-This section records the current real project state. It overrides older future-task wording like "dataset collect karo" or "YOLO train karo" for the first baseline.
+This section records the current real project state. It overrides older future-task wording like "collect dataset" or "train YOLO" for the first baseline.
 
 ### 27.1 Dataset Download Completed
 

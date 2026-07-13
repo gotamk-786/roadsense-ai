@@ -3,14 +3,10 @@ import * as Speech from 'expo-speech';
 import { Detection } from '../types/detection';
 
 const labels: Record<Detection['type'], string> = {
-  pothole: 'Pothole ahead',
-  speed_breaker: 'Speed breaker ahead',
-  animal: 'Animal ahead',
-  pedestrian: 'Pedestrian ahead',
-  vehicle: 'Vehicle ahead',
-  broken_road: 'Broken road ahead',
-  barrier: 'Barrier ahead',
-  water: 'Water ahead'
+  longitudinal_crack: 'Longitudinal crack ahead',
+  transverse_crack: 'Transverse crack ahead',
+  alligator_crack: 'Alligator crack ahead',
+  pothole: 'Pothole ahead'
 };
 
 let lastAlertAt = 0;

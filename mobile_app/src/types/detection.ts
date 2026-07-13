@@ -1,12 +1,8 @@
 ﻿export type HazardType =
-  | 'pothole'
-  | 'speed_breaker'
-  | 'animal'
-  | 'pedestrian'
-  | 'vehicle'
-  | 'broken_road'
-  | 'barrier'
-  | 'water';
+  | 'longitudinal_crack'
+  | 'transverse_crack'
+  | 'alligator_crack'
+  | 'pothole';
 
 export type Detection = {
   id: string;

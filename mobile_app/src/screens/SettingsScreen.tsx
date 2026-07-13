@@ -1,4 +1,5 @@
-﻿import { SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
+﻿import { StyleSheet, Switch, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
 export function SettingsScreen() {

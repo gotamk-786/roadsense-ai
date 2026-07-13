@@ -15,6 +15,7 @@
         "NSLocationWhenInUseUsageDescription": "RoadSense AI saves hazard locations for history and map alerts."
       }
     },
+    "newArchEnabled": false,
     "android": {
       "package": "com.roadsenseai.mobile",
       "permissions": [
