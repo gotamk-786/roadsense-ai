@@ -233,7 +233,7 @@ Notes:
 
 - Overall precision/recall/mAP50 are a little lower than v1's, but v2 is solving a harder problem: two different camera domains (drone-aerial + ground-level GoPro/phone), a new `manhole` class, and coarser crack labeling (3 subtypes merged into 1). This trades narrow-benchmark score for real-world generalization.
 - ONNX export uses `--imgsz 640` and 3 output classes. `mobile_app/src/services/onDeviceDetector.ts`, `alertEngine.ts`, `mockDetector.ts`, and `inferenceClient.ts` were all updated to the new `crack` / `pothole` / `manhole` labels.
-- The mobile app's on-device confidence threshold was lowered from 0.6 to 0.4 to reduce missed detections given v2's more conservative confidence scores.
+- The mobile app's on-device confidence threshold was adjusted from 0.6 to 0.5 to balance missed detections against false positives, given v2's more conservative confidence scores.
 - Next step to raise quality further: more pothole/manhole images (both classes still have recall around 0.5) and more negative/background road images.
 
 Demo command:
