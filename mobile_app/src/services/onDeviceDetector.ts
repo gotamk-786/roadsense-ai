@@ -7,7 +7,7 @@ import { Detection, HazardType } from '../types/detection';
 
 const inputSize = 640;
 const maxCandidatesBeforeNms = 120;
-const labels: HazardType[] = ['longitudinal_crack', 'transverse_crack', 'alligator_crack', 'pothole'];
+const labels: HazardType[] = ['crack', 'pothole', 'manhole'];
 const modelAsset = require('../../assets/models/roadsense-rdd2022-yolov8n-best.onnx');
 
 let sessionPromise: Promise<InferenceSession> | null = null;
@@ -76,7 +76,7 @@ async function imageToTensor(imageUri: string): Promise<Tensor> {
 }
 
 function parseYoloOutput(data: Float32Array): Detection[] {
-  const rows = 8;
+  const rows = 4 + labels.length;
   const columns = Math.floor(data.length / rows);
   const candidates: Candidate[] = [];
 
@@ -85,7 +85,7 @@ function parseYoloOutput(data: Float32Array): Detection[] {
     const confidence = Math.max(...classScores);
     const labelIndex = classScores.indexOf(confidence);
 
-    if (confidence < 0.6) {
+    if (confidence < 0.4) {
       continue;
     }
 

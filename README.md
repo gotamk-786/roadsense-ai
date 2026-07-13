@@ -18,6 +18,25 @@ backend/      Local Express API for hazard reports
 docs/         Industry-style documentation
 ```
 
+## Model Status
+
+Two trained versions exist; v2 is the current active model used by the app.
+
+**v2 (current active):** `ai_model/exports/roadsense-v2-yolov8n-best.pt`
+- Dataset: RDD2022 China Drone + Kaggle "Road Damage Dataset" (real GoPro/phone road photos, Italy)
+- Classes: `crack`, `pothole`, `manhole`
+- Training: Google Colab T4 GPU, 172 epochs (early stop at 142), imgsz 640, batch 16, patience 30
+- Test metrics: precision 0.643, recall 0.555, mAP50 0.571, mAP50-95 0.265
+- Inference: ~2.1 ms per image on a T4 GPU
+
+**v1 (backup):** `ai_model/exports/roadsense-rdd2022-yolov8n-best-OLD.pt`
+- Dataset: RDD2022 China Drone only
+- Classes: `longitudinal_crack`, `transverse_crack`, `alligator_crack`, `pothole`
+- Training: Google Colab T4 GPU, 150 epochs, imgsz 640, batch 16
+- Test metrics: precision 0.673, recall 0.665, mAP50 0.648, mAP50-95 0.369
+
+See `docs/model-evaluation.md` and `docs/training-runs.md` for full details.
+
 ## Free MVP Stack
 
 - React Native + Expo
@@ -56,7 +75,7 @@ npm.cmd run start
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
-python training_scripts\run_video_demo.py --model exports\roadsense-rdd2022-yolov8n-best.pt --source datasets\roadsense\images\test --save
+python training_scripts\run_video_demo.py --model exports\roadsense-v2-yolov8n-best.pt --source datasets\roadsense-v2\images\test --save
 ```
 
 ## Run YOLO Inference API

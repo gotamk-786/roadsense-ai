@@ -1,10 +1,9 @@
-﻿path: ./datasets/roadsense
+path: ./datasets/roadsense-v2
 train: images/train
 val: images/val
 test: images/test
 
 names:
-  0: longitudinal_crack
-  1: transverse_crack
-  2: alligator_crack
-  3: pothole
+  0: crack
+  1: pothole
+  2: manhole

@@ -3,10 +3,9 @@ import * as Speech from 'expo-speech';
 import { Detection } from '../types/detection';
 
 const labels: Record<Detection['type'], string> = {
-  longitudinal_crack: 'Longitudinal crack ahead',
-  transverse_crack: 'Transverse crack ahead',
-  alligator_crack: 'Alligator crack ahead',
-  pothole: 'Pothole ahead'
+  crack: 'Road crack ahead',
+  pothole: 'Pothole ahead',
+  manhole: 'Manhole ahead'
 };
 
 let lastAlertAt = 0;

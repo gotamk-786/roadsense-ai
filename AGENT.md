@@ -895,13 +895,9 @@ Classes in `ai_model/data.yaml`:
 
 ### 27.3 Model Training Completed
 
-Current best model, retrained on Google Colab (T4 GPU):
+Two model versions have been trained. **v2 is the current active model** used by the app; v1 is kept as a backup.
 
-```txt
-D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
-```
-
-Previous CPU baseline kept as backup:
+**v1 model** (RDD2022-only, 4 classes), retrained on Google Colab (T4 GPU):
 
 ```txt
 D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best-OLD.pt
@@ -914,8 +910,8 @@ Platform: Google Colab (T4 GPU)
 Epochs: 150 (early stopping enabled, patience=30)
 Image size: 640
 Batch size: 16
-Dataset: same RDD2022 China Drone set (1345 train, 383 val, 191 test images)
-Classes: same 4 (longitudinal_crack, transverse_crack, alligator_crack, pothole)
+Dataset: RDD2022 China Drone only (1345 train, 383 val, 191 test images)
+Classes: 4 (longitudinal_crack, transverse_crack, alligator_crack, pothole)
 ```
 
 Test metrics:
@@ -927,7 +923,7 @@ mAP50: 0.648
 mAP50-95: 0.369
 ```
 
-Previous CPU baseline (10 epochs, imgsz 416, batch 4), kept for comparison:
+Original CPU baseline before this (10 epochs, imgsz 416, batch 4), kept only for historical comparison:
 
 ```txt
 precision: 0.328
@@ -938,7 +934,49 @@ pothole mAP50: 0.630
 pothole mAP50-95: 0.260
 ```
 
-Prediction artifacts:
+**v2 model (current active)**, RDD2022 combined with a second real-road dataset:
+
+```txt
+D:\6th semester\computer vision\ai_model\exports\roadsense-v2-yolov8n-best.pt
+```
+
+Dataset: RDD2022 China Drone + Kaggle "Road Damage Dataset: Potholes, Cracks and Manholes" (lorenzoarcioni) — real GoPro/phone road photos from Rome and Sacrofano, Italy (2009 images, MIT license). Combined and remapped to a shared 3-class scheme with `training_scripts\prepare_combined_dataset.py`.
+
+```txt
+Combined dataset: 2952 train, 583 val, 393 test images
+Classes: 3 (crack, pothole, manhole) — merged from the v1 4-class scheme plus a new manhole class
+```
+
+Training setup:
+
+```txt
+Platform: Google Colab (T4 GPU)
+Epochs: 172 (early stopping at epoch 142, patience=30)
+Image size: 640
+Batch size: 16
+```
+
+Test metrics:
+
+```txt
+overall precision: 0.643
+overall recall: 0.555
+overall mAP50: 0.571
+overall mAP50-95: 0.265
+inference: about 2.1 ms per image on a T4 GPU
+```
+
+Per-class metrics:
+
+```txt
+crack:    precision 0.603, recall 0.629, mAP50 0.623
+pothole:  precision 0.561, recall 0.509, mAP50 0.485
+manhole:  precision 0.767, recall 0.526, mAP50 0.605
+```
+
+Note: moving from 4 classes to 3 required updating the mobile app's `HazardType` and every service that lists hazard labels: `mobile_app/src/services/onDeviceDetector.ts`, `alertEngine.ts`, `mockDetector.ts`, and `inferenceClient.ts`. The ONNX export size also moved from imgsz 416 to imgsz 640 for v2, and the mobile app copy keeps the same filename (`mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx`) so the app's `require()` path did not need to change.
+
+Prediction artifacts (v1 run):
 
 ```txt
 D:\6th semester\computer vision\ai_model\runs\roadsense-rdd2022-predictions
@@ -954,35 +992,47 @@ cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
 ```
 
-Prepare dataset after zip download:
+Prepare the original RDD2022 YOLO dataset after zip download:
 
 ```bat
 python training_scripts\prepare_rdd2022.py
 ```
 
-Train model (current, on Colab GPU):
+Merge RDD2022 with the Kaggle real-road dataset into the combined v2 dataset:
+
+```bat
+python training_scripts\prepare_combined_dataset.py
+```
+
+Train the v2 model (current, on Colab GPU):
+
+```bat
+python training_scripts\train_yolo.py --data data.yaml --epochs 200 --imgsz 640 --batch 16 --device 0 --patience 30 --name roadsense-v2-yolov8n
+```
+
+Train the v1 model, kept for reference:
 
 ```bat
 python training_scripts\train_yolo.py --epochs 150 --imgsz 640 --batch 16 --device 0 --patience 30
 ```
 
-Previous CPU baseline command, kept for reference:
+Original CPU baseline command, kept for historical reference:
 
 ```bat
 python training_scripts\train_yolo.py --epochs 10 --imgsz 416 --batch 4 --device cpu
 ```
 
-Run image demo:
+Run image demo (v2 model):
 
 ```bat
-python training_scripts\run_video_demo.py --model exports\roadsense-rdd2022-yolov8n-best.pt --source datasets\roadsense\images\test\China_Drone_000237.jpg
+python training_scripts\run_video_demo.py --model exports\roadsense-v2-yolov8n-best.pt --source datasets\roadsense-v2\images\test
 ```
 
 ### 27.5 Next Work
 
-- Add more pothole and speed-breaker images from local roads.
-- Add negative/background road images (no damage) to reduce false positives.
-- Integrate `exports\roadsense-rdd2022-yolov8n-best.pt` into the mobile app or convert it to a mobile-friendly format.
+- Add more pothole and manhole images, especially from local/Pakistani roads, since both classes still have modest recall (0.509 and 0.526).
+- Add negative/background road images (no damage) to further reduce false positives.
+- Keep tuning the on-device confidence threshold (`mobile_app/src/services/onDeviceDetector.ts`) against real test drives.
 - Keep all AI environment/cache/model files on D drive.
 
 ## 28. Inference API And Mobile Integration Status
@@ -996,7 +1046,7 @@ ai_model/inference_api/test_client.py
 
 Purpose:
 
-- Load trained YOLO model from `ai_model/exports/roadsense-rdd2022-yolov8n-best.pt`
+- Load trained YOLO model from `ai_model/exports/roadsense-rdd2022-yolov8n-best.pt` (originally the v1 model; point this at `ai_model/exports/roadsense-v2-yolov8n-best.pt` to serve the current active v2 model instead)
 - Expose `/health`
 - Expose `/predict` for multipart image upload
 - Return JSON detections with class label, confidence, and bounding boxes
@@ -1119,23 +1169,29 @@ Added mobile export script:
 ai_model/training_scripts/export_mobile_model.py
 ```
 
-Export command (current, matches the imgsz=640 GPU-trained model):
+Export command (current, v2 model, imgsz 640):
 
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
-python training_scripts\export_mobile_model.py --format onnx --imgsz 640
+python training_scripts\export_mobile_model.py --model exports\roadsense-v2-yolov8n-best.pt --format onnx --imgsz 640
 ```
 
 Verified export:
 
 ```txt
-ai_model/exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
+ai_model/exports/mobile/roadsense-v2-yolov8n-best.onnx
 ```
 
-Important: the mobile app's `onDeviceDetector.ts` resizes camera frames and decodes model output using an `inputSize` constant that must match this export's `imgsz`. It is currently set to `640` to match the GPU-trained model.
+This is copied into the mobile app under the original filename so the app's `require()` path does not need to change:
 
-ONNX test result (previous CPU-baseline export, kept for reference):
+```txt
+mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx
+```
+
+Important: the mobile app's `onDeviceDetector.ts` resizes camera frames and decodes model output using an `inputSize` constant that must match this export's `imgsz`. It is currently set to `640` to match the v2 model, and its `labels` array is `['crack', 'pothole', 'manhole']` to match v2's 3 classes.
+
+ONNX test result (v1 export, imgsz 640, kept for reference):
 
 ```txt
 Source image: datasets/roadsense/images/test/China_Drone_000237.jpg

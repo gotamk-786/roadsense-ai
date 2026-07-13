@@ -33,29 +33,29 @@ Done:
 - React Native ONNX runtime dependency added
 - On-device detector scaffold added in mobile app
 
-Export command (current model, trained at imgsz=640 on GPU):
+Export command (current v2 model, imgsz 640, 3 classes):
 
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
-python training_scripts\export_mobile_model.py --format onnx --imgsz 640
+python training_scripts\export_mobile_model.py --model exports\roadsense-v2-yolov8n-best.pt --format onnx --imgsz 640
 ```
 
 Expected output:
 
 ```txt
-ai_model/exports/mobile/
+ai_model/exports/mobile/roadsense-v2-yolov8n-best.onnx
 ```
 
-Current verified mobile export:
+This gets copied into the mobile app keeping the original filename:
 
 ```txt
-ai_model/exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
+mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx
 ```
 
-Note: `mobile_app/src/services/onDeviceDetector.ts` has an `inputSize` constant that must match the export's `imgsz`. It is set to `640` to match this model.
+Note: `mobile_app/src/services/onDeviceDetector.ts` has an `inputSize` constant that must match the export's `imgsz` (currently `640`), and a `labels` array that must match the model's class order (currently `['crack', 'pothole', 'manhole']` for v2).
 
-Verification result (previous CPU-baseline export at imgsz=416, kept for reference):
+Verification result (v1 export at imgsz=416, kept for historical reference):
 
 ```txt
 Image: datasets/roadsense/images/test/China_Drone_000237.jpg

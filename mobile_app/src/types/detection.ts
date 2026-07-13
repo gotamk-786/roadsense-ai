@@ -1,8 +1,4 @@
-﻿export type HazardType =
-  | 'longitudinal_crack'
-  | 'transverse_crack'
-  | 'alligator_crack'
-  | 'pothole';
+﻿export type HazardType = 'crack' | 'pothole' | 'manhole';
 
 export type Detection = {
   id: string;

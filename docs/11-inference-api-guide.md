@@ -4,20 +4,25 @@
 
 This API connects the trained YOLO road damage model with the app layer.
 
-Current model:
+Current model (v2, active):
 
 ```txt
-ai_model/exports/roadsense-rdd2022-yolov8n-best.pt
+ai_model/exports/roadsense-v2-yolov8n-best.pt
 ```
 
-Current supported classes from the trained dataset:
+Previous model (v1, kept as backup):
 
-- longitudinal_crack
-- transverse_crack
-- alligator_crack
+```txt
+ai_model/exports/roadsense-rdd2022-yolov8n-best-OLD.pt
+```
+
+Current supported classes from the trained dataset (v2):
+
+- crack
 - pothole
+- manhole
 
-The mobile app maps crack labels to `broken_road` for a simpler driver-facing alert.
+The v1 model used 4 classes instead (longitudinal_crack, transverse_crack, alligator_crack, pothole); v2 merges the crack subtypes into one `crack` class and adds `manhole`.
 
 ## Install Dependencies
 

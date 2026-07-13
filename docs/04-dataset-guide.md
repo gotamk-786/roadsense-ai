@@ -117,6 +117,8 @@ Output path:
 D:\6th semester\computer vision\ai_model\datasets\roadsense
 ```
 
+This 4-class set was used for the v1 model only. The current v2 model merges this RDD2022 set with a second real-road dataset (Kaggle, GoPro/phone photos) into a combined 3-class dataset. See `docs/13-real-road-mobile-plan.md` and `training_scripts\prepare_combined_dataset.py` for the merge step, which remaps the 3 crack subtypes above into one `crack` class and adds a `manhole` class from the second dataset.
+
 Then train:
 
 ```bat

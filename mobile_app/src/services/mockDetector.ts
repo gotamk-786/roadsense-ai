@@ -1,11 +1,6 @@
 ﻿import { Detection, HazardType } from '../types/detection';
 
-const hazardTypes: HazardType[] = [
-  'longitudinal_crack',
-  'transverse_crack',
-  'alligator_crack',
-  'pothole'
-];
+const hazardTypes: HazardType[] = ['crack', 'pothole', 'manhole'];
 
 export async function runMockDetection(): Promise<Detection[]> {
   const shouldDetect = Math.random() > 0.62;

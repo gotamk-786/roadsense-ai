@@ -14,12 +14,7 @@ type ApiPredictionResponse = {
   detections: ApiDetection[];
 };
 
-const knownHazardTypes: HazardType[] = [
-  'longitudinal_crack',
-  'transverse_crack',
-  'alligator_crack',
-  'pothole'
-];
+const knownHazardTypes: HazardType[] = ['crack', 'pothole', 'manhole'];
 
 function toHazardType(label: string): HazardType {
   const match = knownHazardTypes.find((type) => type === label);

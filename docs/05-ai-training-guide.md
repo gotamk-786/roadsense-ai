@@ -73,21 +73,61 @@ For resume MVP, target:
 
 ## Current RoadSense Model
 
-RoadSense has been trained on RDD2022 China Drone data, first as a CPU baseline and then retrained on a GPU for production-level accuracy.
+Two versions have been trained. **v2 is the current active model** used by the mobile app.
+
+### v2 (current active)
 
 Model:
 
 ```txt
-D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
+D:\6th semester\computer vision\ai_model\exports\roadsense-v2-yolov8n-best.pt
 ```
 
-Previous CPU baseline kept as backup:
+Dataset: RDD2022 China Drone combined with a second real-road dataset (Kaggle "Road Damage Dataset: Potholes, Cracks and Manholes", real GoPro/phone photos). Merged with `training_scripts\prepare_combined_dataset.py`.
+
+```txt
+train: 2952 images
+val: 583 images
+test: 393 images
+```
+
+Classes (3): `crack`, `pothole`, `manhole`.
+
+Prepare the combined dataset, then train:
+
+```bat
+cd "D:\6th semester\computer vision\ai_model"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
+python training_scripts\prepare_combined_dataset.py
+python training_scripts\train_yolo.py --data data.yaml --epochs 200 --imgsz 640 --batch 16 --device 0 --patience 30 --name roadsense-v2-yolov8n
+```
+
+Test metrics (172 epochs, early stop at 142):
+
+```txt
+overall precision: 0.643
+overall recall: 0.555
+overall mAP50: 0.571
+overall mAP50-95: 0.265
+```
+
+Per-class:
+
+```txt
+crack:    precision 0.603, recall 0.629, mAP50 0.623
+pothole:  precision 0.561, recall 0.509, mAP50 0.485
+manhole:  precision 0.767, recall 0.526, mAP50 0.605
+```
+
+### v1 (kept as backup)
+
+Model:
 
 ```txt
 D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best-OLD.pt
 ```
 
-Dataset counts:
+Dataset: RDD2022 China Drone only, 4 classes (`longitudinal_crack`, `transverse_crack`, `alligator_crack`, `pothole`).
 
 ```txt
 train: 1345 images
@@ -95,21 +135,13 @@ val: 383 images
 test: 191 images
 ```
 
-Reproduce current training (Google Colab, T4 GPU):
+Training command:
 
 ```bat
-cd "D:\6th semester\computer vision\ai_model"
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
 python training_scripts\train_yolo.py --epochs 150 --imgsz 640 --batch 16 --device 0 --patience 30
 ```
 
-Previous CPU baseline command, kept for reference:
-
-```bat
-python training_scripts\train_yolo.py --epochs 10 --imgsz 416 --batch 4 --device cpu
-```
-
-Current test metrics (GPU, 150 epochs, imgsz 640):
+Test metrics:
 
 ```txt
 precision: 0.673
@@ -118,7 +150,11 @@ mAP50: 0.648
 mAP50-95: 0.369
 ```
 
-Previous CPU baseline test metrics, kept for comparison:
+### Original CPU baseline, kept for historical reference
+
+```bat
+python training_scripts\train_yolo.py --epochs 10 --imgsz 416 --batch 4 --device cpu
+```
 
 ```txt
 precision: 0.328
