@@ -5,7 +5,7 @@ import jpeg from 'jpeg-js';
 import { InferenceSession, Tensor } from 'onnxruntime-react-native';
 import { Detection, HazardType } from '../types/detection';
 
-const inputSize = 416;
+const inputSize = 640;
 const maxCandidatesBeforeNms = 120;
 const labels: HazardType[] = ['longitudinal_crack', 'transverse_crack', 'alligator_crack', 'pothole'];
 const modelAsset = require('../../assets/models/roadsense-rdd2022-yolov8n-best.onnx');

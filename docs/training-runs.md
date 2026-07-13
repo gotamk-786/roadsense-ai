@@ -70,7 +70,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env
 python training_scripts\prepare_rdd2022.py
 ```
 
-## roadsense-rdd2022-yolov8n
+## roadsense-rdd2022-yolov8n (CPU baseline, v1)
 
 Purpose: first actual RoadSense road-damage model trained on RDD2022 China Drone data.
 
@@ -95,7 +95,7 @@ Training output:
 
 ```txt
 D:\6th semester\computer vision\ai_model\runs\roadsense-rdd2022-yolov8n\weights\best.pt
-D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
+D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best-OLD.pt
 ```
 
 Test split metrics:
@@ -111,9 +111,9 @@ pothole mAP50-95: 0.260
 
 Notes:
 
-- This is a first baseline trained on CPU.
-- Pothole results are promising, but only 10 pothole instances exist in the test split.
-- Better results need more pothole/speed-breaker images and longer training.
+- This is the first baseline, trained on CPU for 10 epochs at imgsz 416.
+- Pothole results were promising, but only 10 pothole instances exist in the test split.
+- Kept as `-OLD.pt` backup after the GPU retrain below.
 
 Prediction artifacts:
 
@@ -121,6 +121,51 @@ Prediction artifacts:
 D:\6th semester\computer vision\ai_model\runs\roadsense-rdd2022-predictions
 D:\6th semester\computer vision\ai_model\runs\roadsense-rdd2022-test
 ```
+
+Demo command:
+
+```bat
+cd "D:\6th semester\computer vision\ai_model"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
+python training_scripts\run_video_demo.py --model exports\roadsense-rdd2022-yolov8n-best-OLD.pt --source datasets\roadsense\images\test\China_Drone_000237.jpg
+```
+
+## roadsense-rdd2022-yolov8n (GPU retrain, v2, current)
+
+Purpose: retrain the same model on a GPU with more epochs and a larger image size to reduce false positives and raise accuracy toward production level.
+
+Platform and settings:
+
+```txt
+Platform: Google Colab (T4 GPU)
+Epochs: 150 (early stopping enabled, patience=30)
+Image size: 640
+Batch size: 16
+Device: 0
+```
+
+Dataset: same RDD2022 China Drone set used for the CPU baseline (1345 train, 383 val, 191 test images), same 4 classes.
+
+Training output:
+
+```txt
+D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
+```
+
+Test split metrics:
+
+```txt
+precision: 0.673
+recall: 0.665
+mAP50: 0.648
+mAP50-95: 0.369
+```
+
+Notes:
+
+- Precision and recall roughly doubled versus the CPU baseline, mainly from more epochs, a larger image size (640 vs 416), and a larger batch size (16 vs 4).
+- ONNX export for this model uses `--imgsz 640`, and `mobile_app/src/services/onDeviceDetector.ts` was updated to match (`inputSize = 640`) so the mobile app decodes this model's output correctly.
+- Further gains still need more pothole/speed-breaker images and negative (no-damage) road images to cut down remaining false positives.
 
 Demo command:
 

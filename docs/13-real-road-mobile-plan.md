@@ -33,12 +33,12 @@ Done:
 - React Native ONNX runtime dependency added
 - On-device detector scaffold added in mobile app
 
-Export command:
+Export command (current model, trained at imgsz=640 on GPU):
 
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
-python training_scripts\export_mobile_model.py --format onnx --imgsz 416
+python training_scripts\export_mobile_model.py --format onnx --imgsz 640
 ```
 
 Expected output:
@@ -53,7 +53,9 @@ Current verified mobile export:
 ai_model/exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
 ```
 
-Verification result:
+Note: `mobile_app/src/services/onDeviceDetector.ts` has an `inputSize` constant that must match the export's `imgsz`. It is set to `640` to match this model.
+
+Verification result (previous CPU-baseline export at imgsz=416, kept for reference):
 
 ```txt
 Image: datasets/roadsense/images/test/China_Drone_000237.jpg

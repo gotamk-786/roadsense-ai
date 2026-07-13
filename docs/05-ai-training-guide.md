@@ -71,14 +71,20 @@ For resume MVP, target:
 - 3 classes minimum
 - short demo video with visible detections
 
-## Current RoadSense Baseline
+## Current RoadSense Model
 
-The first actual RoadSense baseline has already been trained on RDD2022 China Drone data.
+RoadSense has been trained on RDD2022 China Drone data, first as a CPU baseline and then retrained on a GPU for production-level accuracy.
 
 Model:
 
 ```txt
 D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
+```
+
+Previous CPU baseline kept as backup:
+
+```txt
+D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best-OLD.pt
 ```
 
 Dataset counts:
@@ -89,15 +95,30 @@ val: 383 images
 test: 191 images
 ```
 
-Reproduce training:
+Reproduce current training (Google Colab, T4 GPU):
 
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
+python training_scripts\train_yolo.py --epochs 150 --imgsz 640 --batch 16 --device 0 --patience 30
+```
+
+Previous CPU baseline command, kept for reference:
+
+```bat
 python training_scripts\train_yolo.py --epochs 10 --imgsz 416 --batch 4 --device cpu
 ```
 
-Known baseline test metrics:
+Current test metrics (GPU, 150 epochs, imgsz 640):
+
+```txt
+precision: 0.673
+recall: 0.665
+mAP50: 0.648
+mAP50-95: 0.369
+```
+
+Previous CPU baseline test metrics, kept for comparison:
 
 ```txt
 precision: 0.328

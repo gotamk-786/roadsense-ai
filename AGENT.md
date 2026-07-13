@@ -895,19 +895,39 @@ Classes in `ai_model/data.yaml`:
 
 ### 27.3 Model Training Completed
 
-First real baseline model:
+Current best model, retrained on Google Colab (T4 GPU):
 
 ```txt
 D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best.pt
 ```
 
-Original training output:
+Previous CPU baseline kept as backup:
 
 ```txt
-D:\6th semester\computer vision\ai_model\runs\roadsense-rdd2022-yolov8n\weights\best.pt
+D:\6th semester\computer vision\ai_model\exports\roadsense-rdd2022-yolov8n-best-OLD.pt
+```
+
+Training setup:
+
+```txt
+Platform: Google Colab (T4 GPU)
+Epochs: 150 (early stopping enabled, patience=30)
+Image size: 640
+Batch size: 16
+Dataset: same RDD2022 China Drone set (1345 train, 383 val, 191 test images)
+Classes: same 4 (longitudinal_crack, transverse_crack, alligator_crack, pothole)
 ```
 
 Test metrics:
+
+```txt
+precision: 0.673
+recall: 0.665
+mAP50: 0.648
+mAP50-95: 0.369
+```
+
+Previous CPU baseline (10 epochs, imgsz 416, batch 4), kept for comparison:
 
 ```txt
 precision: 0.328
@@ -940,7 +960,13 @@ Prepare dataset after zip download:
 python training_scripts\prepare_rdd2022.py
 ```
 
-Train model:
+Train model (current, on Colab GPU):
+
+```bat
+python training_scripts\train_yolo.py --epochs 150 --imgsz 640 --batch 16 --device 0 --patience 30
+```
+
+Previous CPU baseline command, kept for reference:
 
 ```bat
 python training_scripts\train_yolo.py --epochs 10 --imgsz 416 --batch 4 --device cpu
@@ -955,7 +981,7 @@ python training_scripts\run_video_demo.py --model exports\roadsense-rdd2022-yolo
 ### 27.5 Next Work
 
 - Add more pothole and speed-breaker images from local roads.
-- Train longer on a GPU or Google Colab for better metrics.
+- Add negative/background road images (no damage) to reduce false positives.
 - Integrate `exports\roadsense-rdd2022-yolov8n-best.pt` into the mobile app or convert it to a mobile-friendly format.
 - Keep all AI environment/cache/model files on D drive.
 
@@ -1093,12 +1119,12 @@ Added mobile export script:
 ai_model/training_scripts/export_mobile_model.py
 ```
 
-Export command:
+Export command (current, matches the imgsz=640 GPU-trained model):
 
 ```bat
 cd "D:\6th semester\computer vision\ai_model"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\activate_d_drive_env.ps1
-python training_scripts\export_mobile_model.py --format onnx --imgsz 416
+python training_scripts\export_mobile_model.py --format onnx --imgsz 640
 ```
 
 Verified export:
@@ -1107,7 +1133,9 @@ Verified export:
 ai_model/exports/mobile/roadsense-rdd2022-yolov8n-best.onnx
 ```
 
-ONNX test result:
+Important: the mobile app's `onDeviceDetector.ts` resizes camera frames and decodes model output using an `inputSize` constant that must match this export's `imgsz`. It is currently set to `640` to match the GPU-trained model.
+
+ONNX test result (previous CPU-baseline export, kept for reference):
 
 ```txt
 Source image: datasets/roadsense/images/test/China_Drone_000237.jpg
