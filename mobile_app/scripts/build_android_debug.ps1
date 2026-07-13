@@ -28,6 +28,7 @@ $env:ANDROID_SDK_ROOT = $androidHome
 $env:GRADLE_USER_HOME = $gradleHome
 $env:TEMP = $tmpDir
 $env:TMP = $tmpDir
+$env:NODE_OPTIONS = "--max-old-space-size=4096"
 
 $staleBundleDirs = @(
   (Join-Path $androidRoot "app\build\generated\assets\createBundleDebugJsAndAssets"),
