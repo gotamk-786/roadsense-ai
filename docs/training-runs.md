@@ -236,6 +236,29 @@ Notes:
 - The mobile app's on-device confidence threshold was adjusted from 0.6 to 0.5 to balance missed detections against false positives, given v2's more conservative confidence scores.
 - Next step to raise quality further: more pothole/manhole images (both classes still have recall around 0.5) and more negative/background road images.
 
+### Update: resumed retrain, best at epoch 117
+
+The v2 run above was resumed on Colab (T4 GPU, checkpoint saved to Google Drive between sessions) and trained longer with early stopping enabled (patience 30). Best weights were saved at epoch 117; training stopped automatically after 30 epochs with no further improvement.
+
+Validation metrics (866 images, 1440 instances):
+
+```txt
+overall precision: 0.715
+overall recall: 0.59
+overall mAP50: 0.651
+overall mAP50-95: 0.322
+```
+
+Per-class metrics:
+
+```txt
+crack:    precision 0.68,  recall 0.612, mAP50 0.64,  mAP50-95 0.336
+pothole:  precision 0.706, recall 0.601, mAP50 0.663, mAP50-95 0.325
+manhole:  precision 0.758, recall 0.558, mAP50 0.651, mAP50-95 0.304
+```
+
+This is the version currently exported to `ai_model/exports/roadsense-v2-yolov8n-best.pt` and `.onnx`, replacing the earlier v2 export above. All classes improved versus the original v2 test-split numbers.
+
 Demo command:
 
 ```bat

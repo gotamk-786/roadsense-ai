@@ -2,6 +2,20 @@
 
 Free-first computer vision mobile app for real-time road hazard detection.
 
+## Problem
+
+Potholes, road cracks, and open/damaged manholes cause accidents and vehicle damage, but drivers usually only find out about them by hitting them. Most roads (especially outside major cities) have no real-time hazard-warning system, and municipal road-condition data is collected manually and rarely updated. There is no free, on-device way for a driver to get an early warning and for that hazard location to be logged automatically.
+
+## Solution
+
+RoadSense AI runs a custom-trained YOLOv8 object detector on the phone's live camera feed to detect `crack`, `pothole`, and `manhole` hazards in real time. When a hazard is detected it:
+
+- Warns the driver immediately with voice and vibration alerts
+- Geo-tags the detection with GPS and logs it to a local hazard map/history
+- Works entirely with free/local tools — no paid cloud vision API, no commercial maps subscription
+
+The model was trained on a combined dataset (RDD2022 drone imagery + real GoPro/phone road photos) so it generalizes to the kind of handheld/dashcam footage the mobile app actually captures, not just aerial drone shots.
+
 ## Goal
 
 Build a resume-ready MVP that detects road hazards from a mobile camera feed and warns the driver using voice, vibration, GPS logging, and detection history.
@@ -25,8 +39,11 @@ Two trained versions exist; v2 is the current active model used by the app.
 **v2 (current active):** `ai_model/exports/roadsense-v2-yolov8n-best.pt`
 - Dataset: RDD2022 China Drone + Kaggle "Road Damage Dataset" (real GoPro/phone road photos, Italy)
 - Classes: `crack`, `pothole`, `manhole`
-- Training: Google Colab T4 GPU, 172 epochs (early stop at 142), imgsz 640, batch 16, patience 30
-- Test metrics: precision 0.643, recall 0.555, mAP50 0.571, mAP50-95 0.265
+- Training: Google Colab T4 GPU, up to 200 epochs (early stop, best at epoch 117), imgsz 640, batch 16, patience 30
+- Validation metrics: precision 0.715, recall 0.59, mAP50 0.651, mAP50-95 0.322
+  - crack: precision 0.68, recall 0.612, mAP50 0.64
+  - pothole: precision 0.706, recall 0.601, mAP50 0.663
+  - manhole: precision 0.758, recall 0.558, mAP50 0.651
 - Inference: ~2.1 ms per image on a T4 GPU
 
 **v1 (backup):** `ai_model/exports/roadsense-rdd2022-yolov8n-best-OLD.pt`
