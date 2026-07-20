@@ -47,10 +47,10 @@ Expected output:
 ai_model/exports/mobile/roadsense-v2-yolov8n-best.onnx
 ```
 
-This gets copied into the mobile app keeping the original filename:
+This gets copied into the mobile app:
 
 ```txt
-mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx
+mobile_app/assets/models/roadsense-v2-yolov8n-best.onnx
 ```
 
 Note: `mobile_app/src/services/onDeviceDetector.ts` has an `inputSize` constant that must match the export's `imgsz` (currently `640`), and a `labels` array that must match the model's class order (currently `['crack', 'pothole', 'manhole']` for v2).
@@ -79,7 +79,7 @@ Recommended path:
 Current implementation files:
 
 ```txt
-mobile_app/assets/models/roadsense-rdd2022-yolov8n-best.onnx
+mobile_app/assets/models/roadsense-v2-yolov8n-best.onnx
 mobile_app/src/services/onDeviceDetector.ts
 mobile_app/src/config/inference.ts
 mobile_app/android/

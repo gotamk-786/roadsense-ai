@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { CameraScreen } from './src/screens/CameraScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
@@ -16,7 +16,7 @@ const tabs: { id: Tab; label: string }[] = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('camera');
+  const [activeTab, setActiveTab] = useState<Tab>('map');
 
   return (
     <SafeAreaProvider>
@@ -46,6 +46,13 @@ export default function App() {
 function renderTab(tab: Tab) {
   switch (tab) {
     case 'camera':
+      if (Platform.OS === 'web') {
+        return (
+          <View style={styles.webNotice}>
+            <Text style={styles.webNoticeText}>Live camera detection is only available in the Android app.</Text>
+          </View>
+        );
+      }
       return <CameraScreen />;
     case 'history':
       return <HistoryScreen />;
@@ -92,5 +99,17 @@ const styles = StyleSheet.create({
   },
   navTextActive: {
     color: '#111111'
+  },
+  webNotice: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: '#101214'
+  },
+  webNoticeText: {
+    color: '#c7c7c7',
+    fontSize: 15,
+    textAlign: 'center'
   }
 });

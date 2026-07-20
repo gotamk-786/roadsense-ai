@@ -1,18 +1,47 @@
-﻿import { StyleSheet, Switch, Text, View } from 'react-native';
+import { StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AppSettings, defaultAppSettings, loadAppSettings, saveAppSettings } from '../storage/appSettings';
 
 export function SettingsScreen() {
-  const [voiceAlerts, setVoiceAlerts] = useState(true);
-  const [vibrationAlerts, setVibrationAlerts] = useState(true);
-  const [saveReports, setSaveReports] = useState(true);
+  const [settings, setSettings] = useState<AppSettings>(defaultAppSettings);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    loadAppSettings().then((value) => {
+      setSettings(value);
+      setLoaded(true);
+    });
+  }, []);
+
+  function updateSetting<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
+    const next = { ...settings, [key]: value };
+    setSettings(next);
+    saveAppSettings(next);
+  }
+
+  if (!loaded) {
+    return <SafeAreaView style={styles.root} />;
+  }
 
   return (
     <SafeAreaView style={styles.root}>
       <Text style={styles.title}>Settings</Text>
-      <SettingRow label="Voice alerts" value={voiceAlerts} onValueChange={setVoiceAlerts} />
-      <SettingRow label="Vibration alerts" value={vibrationAlerts} onValueChange={setVibrationAlerts} />
-      <SettingRow label="Save local reports" value={saveReports} onValueChange={setSaveReports} />
+      <SettingRow
+        label="Voice alerts"
+        value={settings.voiceAlerts}
+        onValueChange={(value) => updateSetting('voiceAlerts', value)}
+      />
+      <SettingRow
+        label="Vibration alerts"
+        value={settings.vibrationAlerts}
+        onValueChange={(value) => updateSetting('vibrationAlerts', value)}
+      />
+      <SettingRow
+        label="Save local reports"
+        value={settings.saveReports}
+        onValueChange={(value) => updateSetting('saveReports', value)}
+      />
     </SafeAreaView>
   );
 }

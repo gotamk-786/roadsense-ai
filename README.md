@@ -37,7 +37,7 @@ docs/         Industry-style documentation
 Two trained versions exist; v2 is the current active model used by the app.
 
 **v2 (current active):** `ai_model/exports/roadsense-v2-yolov8n-best.pt`
-- Dataset: RDD2022 China Drone + Kaggle "Road Damage Dataset" (real GoPro/phone road photos, Italy)
+- Dataset: RDD2022 China Drone + Kaggle "Road Damage Dataset" (Italy) + a Kaggle Indian roads pothole dataset (pothole boxes plus hard-negative background images of unpaved/ungraded roads, speed breakers, and bumps)
 - Classes: `crack`, `pothole`, `manhole`
 - Training: Google Colab T4 GPU, up to 200 epochs (early stop, best at epoch 117), imgsz 640, batch 16, patience 30
 - Validation metrics: precision 0.715, recall 0.59, mAP50 0.651, mAP50-95 0.322

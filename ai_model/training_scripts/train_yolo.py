@@ -28,6 +28,14 @@ def main() -> None:
     parser.add_argument("--name", default="roadsense-rdd2022-yolov8n")
     parser.add_argument("--patience", type=int, default=5)
     parser.add_argument("--export", action="store_true", help="Export TFLite after training")
+    parser.add_argument("--mosaic", type=float, default=1.0, help="Mosaic augmentation probability")
+    parser.add_argument("--mixup", type=float, default=0.15, help="Mixup augmentation probability")
+    parser.add_argument("--hsv-h", type=float, default=0.015, help="HSV hue augmentation")
+    parser.add_argument("--hsv-s", type=float, default=0.7, help="HSV saturation augmentation")
+    parser.add_argument("--hsv-v", type=float, default=0.4, help="HSV value/brightness augmentation")
+    parser.add_argument("--degrees", type=float, default=10.0, help="Rotation augmentation (degrees)")
+    parser.add_argument("--translate", type=float, default=0.1, help="Translation augmentation")
+    parser.add_argument("--scale", type=float, default=0.5, help="Scale augmentation")
     args = parser.parse_args()
 
     model_path = existing_file(Path(args.model), "Base model")
@@ -49,6 +57,14 @@ def main() -> None:
         device=args.device,
         workers=args.workers,
         patience=args.patience,
+        mosaic=args.mosaic,
+        mixup=args.mixup,
+        hsv_h=args.hsv_h,
+        hsv_s=args.hsv_s,
+        hsv_v=args.hsv_v,
+        degrees=args.degrees,
+        translate=args.translate,
+        scale=args.scale,
     )
 
     best_model = project_root / "runs" / args.name / "weights" / "best.pt"

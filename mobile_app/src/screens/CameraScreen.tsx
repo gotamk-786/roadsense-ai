@@ -10,7 +10,9 @@ import { alertForDetection } from '../services/alertEngine';
 import { runMockDetection } from '../services/mockDetector';
 import { runApiDetection } from '../services/inferenceClient';
 import { runOnDeviceDetection, warmOnDeviceDetector } from '../services/onDeviceDetector';
+import { reportHazardToBackend } from '../services/backendClient';
 import { saveHazardReport } from '../storage/hazardHistory';
+import { AppSettings, defaultAppSettings, loadAppSettings } from '../storage/appSettings';
 import { INFERENCE_API_URL, USE_ON_DEVICE_INFERENCE, USE_REAL_INFERENCE } from '../config/inference';
 
 export function CameraScreen() {
@@ -24,6 +26,7 @@ export function CameraScreen() {
   const isProcessingRef = useRef(false);
   const lastAlertAtRef = useRef(0);
   const lastLocationRef = useRef<Location.LocationObject | null>(null);
+  const settingsRef = useRef<AppSettings>(defaultAppSettings);
 
   const detectionIntervalMs = USE_ON_DEVICE_INFERENCE ? 2600 : 1400;
 
@@ -31,6 +34,9 @@ export function CameraScreen() {
     requestCameraPermission();
     Location.requestForegroundPermissionsAsync().then((result) => {
       setLocationGranted(result.status === 'granted');
+    });
+    loadAppSettings().then((settings) => {
+      settingsRef.current = settings;
     });
   }, [requestCameraPermission]);
 
@@ -93,7 +99,7 @@ export function CameraScreen() {
       const now = Date.now();
       if (now - lastAlertAtRef.current > 3500) {
         lastAlertAtRef.current = now;
-        await alertForDetection(strongest);
+        await alertForDetection(strongest, settingsRef.current);
       }
 
       if (locationGranted && now - (lastLocationRef.current?.timestamp ?? 0) > 5000) {
@@ -102,15 +108,21 @@ export function CameraScreen() {
         });
       }
 
+      if (!settingsRef.current.saveReports) {
+        return;
+      }
+
       const location = lastLocationRef.current;
-      await saveHazardReport({
+      const report = {
         id: strongest.id,
         type: strongest.type,
         confidence: strongest.confidence,
         latitude: location?.coords.latitude ?? null,
         longitude: location?.coords.longitude ?? null,
         createdAt: strongest.createdAt
-      });
+      };
+      await saveHazardReport(report);
+      reportHazardToBackend(report);
     }, detectionIntervalMs);
 
     return () => {

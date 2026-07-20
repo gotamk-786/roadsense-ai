@@ -11,7 +11,12 @@ const labels: Record<Detection['type'], string> = {
 let lastAlertAt = 0;
 let lastAlertType = '';
 
-export async function alertForDetection(detection: Detection) {
+export type AlertPreferences = {
+  voiceAlerts: boolean;
+  vibrationAlerts: boolean;
+};
+
+export async function alertForDetection(detection: Detection, preferences: AlertPreferences) {
   const now = Date.now();
   const cooldownMs = 5500;
 
@@ -26,6 +31,10 @@ export async function alertForDetection(detection: Detection) {
   lastAlertAt = now;
   lastAlertType = detection.type;
 
-  await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-  Speech.speak(labels[detection.type], { rate: 0.95, pitch: 1 });
+  if (preferences.vibrationAlerts) {
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  }
+  if (preferences.voiceAlerts) {
+    Speech.speak(labels[detection.type], { rate: 0.95, pitch: 1 });
+  }
 }

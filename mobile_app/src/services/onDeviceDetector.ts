@@ -8,7 +8,7 @@ import { Detection, HazardType } from '../types/detection';
 const inputSize = 640;
 const maxCandidatesBeforeNms = 120;
 const labels: HazardType[] = ['crack', 'pothole', 'manhole'];
-const modelAsset = require('../../assets/models/roadsense-rdd2022-yolov8n-best.onnx');
+const modelAsset = require('../../assets/models/roadsense-v2-yolov8n-best.onnx');
 
 let sessionPromise: Promise<InferenceSession> | null = null;
 
